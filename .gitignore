@@ -52,6 +52,11 @@ data/
 Thumbs.db
 desktop.ini
 
+# Media (large binaries; keep demos outside Git or use Git LFS)
+*.mp4
+*.avi
+*.mov
+
 # Output
 output/
 runs/
@@ -66,7 +71,6 @@ logs/
 .kiro/
 
 # Project specific
-find-nemo-and-dory/
 Colab Notebooks/
 *.docx
 *.doc

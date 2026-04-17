@@ -1,0 +1,1599 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🐠 Find Marine Friends - Nhận dạng sinh vật biển</title>
+    <style>
+      /* ===== RESET & BASE ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0c3547 0%,
+          #124c6b 50%,
+          #1a6b8a 100%
+        );
+        color: #e0e0e0;
+        min-height: 100vh;
+      }
+
+      /* ===== HEADER ===== */
+      .header {
+        text-align: center;
+        padding: 30px 20px 15px;
+        background: rgba(0, 0, 0, 0.25);
+        border-bottom: 2px solid rgba(255, 140, 0, 0.4);
+      }
+      .header h1 {
+        font-size: 2rem;
+        color: #ff8c00;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      }
+      .header p {
+        color: #a0c8e0;
+        margin-top: 6px;
+        font-size: 0.95rem;
+      }
+      .device-badge {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 4px 14px;
+        background: rgba(0, 200, 100, 0.2);
+        border: 1px solid rgba(0, 200, 100, 0.5);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: #6fd89e;
+      }
+
+      /* ===== DEVICE TOGGLE ===== */
+      .device-toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        padding: 6px 16px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px;
+      }
+      .device-toggle-wrap .label {
+        font-size: 0.82rem;
+        color: #a0c8e0;
+        font-weight: 600;
+      }
+      .device-toggle-wrap .label.active {
+        color: #ffffff;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 26px;
+        cursor: pointer;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: #3a6ea5;
+        border-radius: 26px;
+        transition: background 0.3s;
+      }
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 3px;
+        bottom: 3px;
+        background: #ffffff;
+        border-radius: 50%;
+        transition: transform 0.3s;
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background: #4caf50;
+      }
+      .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(22px);
+      }
+      .gpu-name-text {
+        font-size: 0.72rem;
+        color: #78b8a0;
+        margin-top: 4px;
+      }
+
+      /* ===== CONTAINER ===== */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* ===== UPLOAD PANEL ===== */
+      .upload-panel {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 28px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(10px);
+      }
+      .upload-panel h2 {
+        color: #ff8c00;
+        font-size: 1.2rem;
+        margin-bottom: 18px;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+      .form-group {
+        flex: 1;
+        min-width: 200px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        color: #a0c8e0;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      /* File drop zone */
+      .drop-zone {
+        border: 2px dashed rgba(255, 140, 0, 0.5);
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: rgba(0, 0, 0, 0.15);
+        margin-bottom: 16px;
+      }
+      .drop-zone:hover,
+      .drop-zone.dragover {
+        border-color: #ff8c00;
+        background: rgba(255, 140, 0, 0.08);
+      }
+      .drop-zone .icon {
+        font-size: 2.5rem;
+        margin-bottom: 8px;
+      }
+      .drop-zone .text {
+        color: #a0c8e0;
+        font-size: 0.9rem;
+      }
+      .drop-zone .filename {
+        color: #ff8c00;
+        font-weight: 600;
+        margin-top: 6px;
+      }
+      .drop-zone input[type="file"] {
+        display: none;
+      }
+
+      /* Preview */
+      .preview-container {
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .preview-container img {
+        max-height: 200px;
+        max-width: 100%;
+        border-radius: 8px;
+        border: 2px solid rgba(255, 140, 0, 0.3);
+      }
+
+      /* Select & inputs */
+      select,
+      input[type="range"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+        font-size: 0.95rem;
+        outline: none;
+      }
+      select:focus {
+        border-color: #ff8c00;
+      }
+      .conf-value {
+        font-size: 0.85rem;
+        color: #ff8c00;
+        font-weight: bold;
+      }
+
+      /* Button */
+      .btn {
+        padding: 12px 32px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #ff8c00, #e67000);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+      }
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-mode {
+        padding: 8px 20px;
+        border: 1px solid rgba(255, 140, 0, 0.4);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        color: #a0c8e0;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-mode:hover {
+        background: rgba(255, 140, 0, 0.12);
+      }
+      .btn-mode.active {
+        background: rgba(255, 140, 0, 0.25);
+        color: #ff8c00;
+        border-color: #ff8c00;
+      }
+
+      /* ===== LOADING ===== */
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 40px;
+      }
+      .loading.show {
+        display: block;
+      }
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top: 4px solid #ff8c00;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ===== PROGRESS BAR ===== */
+      .progress-bar-bg {
+        width: 100%;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ff8c00, #ffc800);
+        border-radius: 5px;
+        transition: width 0.3s ease;
+      }
+
+      /* ===== RESULTS ===== */
+      .results-section {
+        display: none;
+      }
+      .results-section.show {
+        display: block;
+      }
+
+      /* ===== FOLDER NAV ===== */
+      .folder-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+        padding: 12px 20px;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 140, 0, 0.25);
+      }
+      .folder-nav .btn-nav {
+        padding: 8px 22px;
+        border: 1px solid rgba(255, 140, 0, 0.5);
+        border-radius: 8px;
+        background: rgba(255, 140, 0, 0.15);
+        color: #ff8c00;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .folder-nav .btn-nav:hover:not(:disabled) {
+        background: rgba(255, 140, 0, 0.35);
+        transform: translateY(-1px);
+      }
+      .folder-nav .btn-nav:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .folder-nav .nav-info {
+        color: #e0e0e0;
+        font-size: 0.92rem;
+        font-weight: 600;
+        min-width: 200px;
+        text-align: center;
+      }
+      .folder-nav .nav-info .nav-filename {
+        display: block;
+        color: #a0c8e0;
+        font-size: 0.8rem;
+        font-weight: 400;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 300px;
+      }
+
+      .result-card {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
+      .result-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .result-header h3 {
+        color: #ff8c00;
+        font-size: 1.1rem;
+      }
+      .time-badges {
+        display: flex;
+        gap: 10px;
+      }
+      .badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+      .badge-infer {
+        background: rgba(0, 180, 255, 0.2);
+        color: #4dc9f6;
+        border: 1px solid rgba(0, 180, 255, 0.3);
+      }
+      .badge-load {
+        background: rgba(255, 200, 0, 0.15);
+        color: #ffc800;
+        border: 1px solid rgba(255, 200, 0, 0.3);
+      }
+      .badge-count {
+        background: rgba(0, 200, 100, 0.15);
+        color: #5fe085;
+        border: 1px solid rgba(0, 200, 100, 0.3);
+      }
+
+      .result-body {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        flex-wrap: wrap;
+      }
+      .result-image {
+        flex: 1;
+        min-width: 300px;
+        text-align: center;
+      }
+      .result-image img {
+        max-width: 100%;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .result-info {
+        flex: 1;
+        min-width: 280px;
+      }
+
+      /* Detection table */
+      .det-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+      }
+      .det-table th {
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        color: #a0c8e0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        text-transform: uppercase;
+      }
+      .det-table td {
+        padding: 7px 10px;
+        font-size: 0.88rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .label-nemo {
+        color: #ff8c00;
+        font-weight: 700;
+      }
+      .label-dory {
+        color: #4dc9f6;
+        font-weight: 700;
+      }
+      .label-bat-sea-star {
+        color: #ffa500;
+        font-weight: 700;
+      }
+      .label-blue-sea-star {
+        color: #00c8ff;
+        font-weight: 700;
+      }
+      .label-crown-of-thorn-starfish {
+        color: #dc3545;
+        font-weight: 700;
+      }
+      .label-red-cushion-sea-star {
+        color: #ff6b6b;
+        font-weight: 700;
+      }
+      .label-royal-starfish {
+        color: #c800c8;
+        font-weight: 700;
+      }
+      .conf-bar {
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        margin-top: 3px;
+      }
+      .conf-bar-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #ff8c00, #ffc800);
+      }
+      .no-detection {
+        color: #a0a0a0;
+        font-style: italic;
+        padding: 12px 0;
+      }
+
+      /* Training metrics panel */
+      .metrics-panel {
+        margin-top: 14px;
+        padding: 12px 16px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .metrics-panel h4 {
+        color: #ffc800;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+      }
+      .metric-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px 0;
+        font-size: 0.82rem;
+      }
+      .metric-label {
+        color: #a0c8e0;
+      }
+      .metric-value {
+        color: #e0e0e0;
+        font-weight: 600;
+      }
+
+      /* ===== TRAINING METRICS TABLE (bottom of page) ===== */
+      .training-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .training-section h2 {
+        color: #ffc800;
+        font-size: 1.1rem;
+        margin-bottom: 14px;
+      }
+      .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .compare-table th,
+      .compare-table td {
+        padding: 10px 14px;
+        text-align: center;
+        font-size: 0.88rem;
+      }
+      .compare-table th {
+        color: #a0c8e0;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+      .compare-table td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .compare-table tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      /* ===== FOOTER ===== */
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #607080;
+        font-size: 0.8rem;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.5rem;
+        }
+        .form-row {
+          flex-direction: column;
+        }
+        .result-body {
+          flex-direction: column;
+        }
+        .result-image {
+          min-width: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+      <h1>🐠 Find Marine Friends</h1>
+      <p>
+        Nhận dạng cá Nemo, Dory và các loài sao biển bằng AI — Faster R-CNN /
+        YOLOv5 / YOLOv8
+      </p>
+      <div class="device-badge">
+        ⚡ Device: <span id="deviceDisplay">{{ device }}</span>
+      </div>
+      <div
+        id="deviceToggleWrap"
+        class="device-toggle-wrap"
+        style="display: none"
+        data-device="{{ device }}"
+        data-cuda="{{ cuda_available }}"
+        data-gpu-name="{{ gpu_name }}"
+      >
+        <span class="label" id="cpuLabel">🖥️ CPU</span>
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            id="deviceToggle"
+            onchange="toggleDevice(this)"
+          />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="label" id="gpuLabel">⚡ GPU</span>
+      </div>
+      <div id="gpuNameText" class="gpu-name-text" style="display: none"></div>
+    </div>
+
+    <div class="container">
+      <!-- ===== UPLOAD PANEL ===== -->
+      <div class="upload-panel">
+        <h2>📷 Upload ảnh/video & chọn mô hình</h2>
+
+        <!-- Chuyển chế độ: Ảnh đơn / Thư mục / Video -->
+        <div style="display: flex; gap: 10px; margin-bottom: 16px">
+          <button
+            class="btn btn-mode active"
+            id="btnModeSingle"
+            onclick="setMode('single')"
+          >
+            🖼️ Ảnh đơn
+          </button>
+          <button
+            class="btn btn-mode"
+            id="btnModeFolder"
+            onclick="setMode('folder')"
+          >
+            📂 Thư mục
+          </button>
+          <button
+            class="btn btn-mode"
+            id="btnModeVideo"
+            onclick="setMode('video')"
+          >
+            🎬 Video
+          </button>
+        </div>
+
+        <!-- Drop zone ảnh đơn -->
+        <div class="drop-zone" id="dropZone">
+          <div class="icon">📁</div>
+          <div class="text">
+            Kéo thả ảnh vào đây hoặc <strong>click để chọn file</strong>
+          </div>
+          <div class="text" style="font-size: 0.8rem; margin-top: 4px">
+            (JPG, PNG, BMP, WebP — tối đa 16MB)
+          </div>
+          <div class="filename" id="fileName"></div>
+          <input type="file" id="fileInput" accept="image/*" />
+        </div>
+
+        <!-- Drop zone thư mục -->
+        <div class="drop-zone" id="dropZoneFolder" style="display: none">
+          <div class="icon">📂</div>
+          <div class="text">
+            Click để <strong>chọn thư mục</strong> chứa ảnh
+          </div>
+          <div class="text" style="font-size: 0.8rem; margin-top: 4px">
+            (Tất cả ảnh JPG, PNG, BMP, WebP trong thư mục sẽ được xử lý)
+          </div>
+          <div class="filename" id="folderName"></div>
+          <input
+            type="file"
+            id="folderInput"
+            accept="image/*"
+            multiple
+            webkitdirectory
+          />
+        </div>
+
+        <!-- Drop zone video -->
+        <div class="drop-zone" id="dropZoneVideo" style="display: none">
+          <div class="icon">🎬</div>
+          <div class="text">
+            Kéo thả video vào đây hoặc <strong>click để chọn file</strong>
+          </div>
+          <div class="text" style="font-size: 0.8rem; margin-top: 4px">
+            (MP4, AVI, MOV, MKV — tối đa 500MB)
+          </div>
+          <div class="filename" id="videoFileName"></div>
+          <input type="file" id="videoInput" accept="video/*" />
+        </div>
+
+        <!-- Preview video -->
+        <div
+          class="preview-container"
+          id="videoPreviewContainer"
+          style="display: none"
+        >
+          <video
+            id="previewVideo"
+            style="
+              max-height: 200px;
+              max-width: 100%;
+              border-radius: 8px;
+              border: 2px solid rgba(255, 140, 0, 0.3);
+            "
+            controls
+            muted
+          ></video>
+        </div>
+
+        <!-- Preview ảnh đã chọn -->
+        <div
+          class="preview-container"
+          id="previewContainer"
+          style="display: none"
+        >
+          <img id="previewImage" alt="Preview" />
+        </div>
+
+        <!-- Chọn model + confidence -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>🤖 Mô hình</label>
+            <select id="modelSelect">
+              <option value="yolov8" selected>
+                YOLOv8 (Khuyến nghị - Nhanh & Chính xác)
+              </option>
+              <option value="yolov5">YOLOv5 (Cân bằng)</option>
+              <option value="fasterrcnn">Faster R-CNN (Chính xác cao)</option>
+              <option value="all">🔄 So sánh cả 3 mô hình</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label
+              >🎯 Ngưỡng Confidence:
+              <span class="conf-value" id="confValue">0.50</span></label
+            >
+            <input
+              type="range"
+              id="confSlider"
+              min="0.1"
+              max="0.95"
+              step="0.05"
+              value="0.5"
+            />
+          </div>
+          <div class="form-group" style="flex: 0 0 auto">
+            <button class="btn btn-primary" id="detectBtn" disabled>
+              🔍 Nhận dạng
+            </button>
+          </div>
+        </div>
+
+        <!-- Skip frames option (chỉ hiện khi chọn Video) -->
+        <div
+          class="form-row"
+          id="videoOptions"
+          style="display: none; margin-top: 12px"
+        >
+          <div class="form-group">
+            <label
+              >🎬 Skip Frames: <span class="conf-value" id="skipValue">2</span>
+              <span style="font-size: 0.75rem; color: #a0a0a0"
+                >(1 = tất cả frame, cao hơn = nhanh hơn)</span
+              >
+            </label>
+            <input
+              type="range"
+              id="skipSlider"
+              min="1"
+              max="10"
+              step="1"
+              value="2"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LOADING ===== -->
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p id="loadingText">Đang xử lý nhận dạng...</p>
+        <p
+          style="font-size: 0.85rem; color: #a0a0a0; margin-top: 6px"
+          id="loadingSubtext"
+        >
+          Lần đầu có thể mất vài giây để load mô hình
+        </p>
+        <!-- Video progress bar -->
+        <div
+          id="videoProgressContainer"
+          style="
+            display: none;
+            margin-top: 16px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-size: 0.82rem;
+              margin-bottom: 6px;
+            "
+          >
+            <span
+              id="progressModel"
+              style="color: #ff8c00; font-weight: 600"
+            ></span>
+            <span id="progressPercent" style="color: #e0e0e0">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-size: 0.78rem;
+              margin-top: 6px;
+              color: #a0a0a0;
+            "
+          >
+            <span id="progressFrames">Frame 0 / 0</span>
+            <span id="progressFps">0 fps</span>
+            <span id="progressEta">ETA: --</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RESULTS ===== -->
+      <div class="results-section" id="resultsSection"></div>
+
+      <!-- ===== TRAINING METRICS ===== -->
+      {% if metrics %}
+      <div class="training-section">
+        <h2>📊 Độ chính xác huấn luyện (Training Metrics)</h2>
+        <p style="font-size: 0.85rem; color: #a0a0a0; margin-bottom: 14px">
+          Metrics tốt nhất đọc từ file results.csv trong quá trình huấn luyện
+        </p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Mô hình</th>
+              <th>Best Epoch</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>mAP@0.5</th>
+              <th>mAP@0.5:0.95</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for name, m in metrics.items() %}
+            <tr>
+              <td style="font-weight: 700; color: #ff8c00">
+                {{ name.upper() }}
+              </td>
+              <td>{{ m.epoch }}</td>
+              <td>{{ "%.1f" | format(m["precision"] * 100) }}%</td>
+              <td>{{ "%.1f" | format(m["recall"] * 100) }}%</td>
+              <td style="color: #5fe085; font-weight: 700">
+                {{ "%.1f" | format(m["mAP@0.5"] * 100) }}%
+              </td>
+              <td>{{ "%.1f" | format(m["mAP@0.5:0.95"] * 100) }}%</td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td style="font-weight: 700; color: #ff8c00">FASTER R-CNN</td>
+              <td colspan="5" style="color: #a0a0a0; font-style: italic">
+                Không có file CSV metrics huấn luyện
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="footer">
+      🐠 Find Marine Friends — Dự án nhận dạng sinh vật biển bằng Deep Learning
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+      // --- Device toggle ---
+      function updateDeviceLabels(isGpu) {
+        const cpuLabel = document.getElementById("cpuLabel");
+        const gpuLabel = document.getElementById("gpuLabel");
+        const display = document.getElementById("deviceDisplay");
+        if (cpuLabel) cpuLabel.classList.toggle("active", !isGpu);
+        if (gpuLabel) gpuLabel.classList.toggle("active", isGpu);
+        if (display) display.textContent = isGpu ? "cuda:0" : "cpu";
+      }
+
+      async function toggleDevice(checkbox) {
+        const newDevice = checkbox.checked ? "cuda:0" : "cpu";
+        try {
+          const resp = await fetch("/set-device", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ device: newDevice }),
+          });
+          const data = await resp.json();
+          if (resp.ok) {
+            updateDeviceLabels(data.device === "cuda:0");
+          } else {
+            alert(data.error || "Không thể chuyển device");
+            checkbox.checked = !checkbox.checked;
+          }
+        } catch (e) {
+          alert("Lỗi kết nối server");
+          checkbox.checked = !checkbox.checked;
+        }
+      }
+
+      // Init device toggle on load
+      {
+        const wrap = document.getElementById("deviceToggleWrap");
+        if (wrap && wrap.dataset.cuda === "True") {
+          wrap.style.display = "";
+          const t = document.getElementById("deviceToggle");
+          if (t) {
+            t.checked = wrap.dataset.device === "cuda:0";
+            updateDeviceLabels(t.checked);
+          }
+          const gn = document.getElementById("gpuNameText");
+          if (gn && wrap.dataset.gpuName) {
+            gn.textContent = wrap.dataset.gpuName;
+            gn.style.display = "";
+          }
+        }
+      }
+
+      // --- Lấy các phần tử DOM ---
+      const dropZone = document.getElementById("dropZone");
+      const dropZoneFolder = document.getElementById("dropZoneFolder");
+      const dropZoneVideo = document.getElementById("dropZoneVideo");
+      const fileInput = document.getElementById("fileInput");
+      const folderInput = document.getElementById("folderInput");
+      const videoInput = document.getElementById("videoInput");
+      const fileName = document.getElementById("fileName");
+      const folderName = document.getElementById("folderName");
+      const videoFileName = document.getElementById("videoFileName");
+      const previewContainer = document.getElementById("previewContainer");
+      const previewImage = document.getElementById("previewImage");
+      const videoPreviewContainer = document.getElementById(
+        "videoPreviewContainer",
+      );
+      const previewVideo = document.getElementById("previewVideo");
+      const confSlider = document.getElementById("confSlider");
+      const confValue = document.getElementById("confValue");
+      const detectBtn = document.getElementById("detectBtn");
+      const loading = document.getElementById("loading");
+      const resultsSection = document.getElementById("resultsSection");
+      const skipSlider = document.getElementById("skipSlider");
+      const skipValue = document.getElementById("skipValue");
+      const videoOptions = document.getElementById("videoOptions");
+
+      let selectedFile = null; // File ảnh đơn
+      let selectedFiles = []; // Danh sách file (folder mode)
+      let selectedVideo = null; // File video
+      let currentMode = "single"; // "single", "folder", hoặc "video"
+
+      // Dữ liệu folder results
+      let folderResults = []; // Mảng kết quả tất cả ảnh
+      let currentImageIndex = 0; // Ảnh đang xem
+
+      // --- Chuyển chế độ ---
+      function setMode(mode) {
+        currentMode = mode;
+        selectedFile = null;
+        selectedFiles = [];
+        selectedVideo = null;
+        detectBtn.disabled = true;
+        fileName.textContent = "";
+        folderName.textContent = "";
+        videoFileName.textContent = "";
+        previewContainer.style.display = "none";
+        videoPreviewContainer.style.display = "none";
+        resultsSection.classList.remove("show");
+        resultsSection.innerHTML = "";
+
+        document
+          .getElementById("btnModeSingle")
+          .classList.toggle("active", mode === "single");
+        document
+          .getElementById("btnModeFolder")
+          .classList.toggle("active", mode === "folder");
+        document
+          .getElementById("btnModeVideo")
+          .classList.toggle("active", mode === "video");
+        dropZone.style.display = mode === "single" ? "" : "none";
+        dropZoneFolder.style.display = mode === "folder" ? "" : "none";
+        dropZoneVideo.style.display = mode === "video" ? "" : "none";
+        videoOptions.style.display = mode === "video" ? "flex" : "none";
+      }
+
+      // --- Drop Zone: ảnh đơn ---
+      dropZone.addEventListener("click", () => fileInput.click());
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+      dropZone.addEventListener("dragleave", () =>
+        dropZone.classList.remove("dragover"),
+      );
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) handleFile(e.target.files[0]);
+      });
+
+      // --- Drop Zone: thư mục ---
+      dropZoneFolder.addEventListener("click", () => folderInput.click());
+      folderInput.addEventListener("change", (e) => {
+        handleFolder(e.target.files);
+      });
+
+      // --- Drop Zone: video ---
+      dropZoneVideo.addEventListener("click", () => videoInput.click());
+      dropZoneVideo.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZoneVideo.classList.add("dragover");
+      });
+      dropZoneVideo.addEventListener("dragleave", () =>
+        dropZoneVideo.classList.remove("dragover"),
+      );
+      dropZoneVideo.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZoneVideo.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) {
+          handleVideoFile(e.dataTransfer.files[0]);
+        }
+      });
+      videoInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) handleVideoFile(e.target.files[0]);
+      });
+
+      // --- Xử lý file video ---
+      function handleVideoFile(file) {
+        if (!file.type.startsWith("video/")) {
+          alert("Vui lòng chọn file video (MP4, AVI, MOV, MKV)");
+          return;
+        }
+        selectedVideo = file;
+        videoFileName.textContent = file.name;
+        detectBtn.disabled = false;
+
+        const url = URL.createObjectURL(file);
+        previewVideo.src = url;
+        videoPreviewContainer.style.display = "block";
+      }
+
+      // --- Xử lý file ảnh đơn ---
+      function handleFile(file) {
+        if (!file.type.startsWith("image/")) {
+          alert("Vui lòng chọn file ảnh (JPG, PNG, BMP, WebP)");
+          return;
+        }
+        selectedFile = file;
+        fileName.textContent = file.name;
+        detectBtn.disabled = false;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImage.src = e.target.result;
+          previewContainer.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // --- Xử lý folder ---
+      function handleFolder(files) {
+        const imgExts = [
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".bmp",
+          ".webp",
+          ".tif",
+          ".tiff",
+        ];
+        selectedFiles = [];
+        for (const f of files) {
+          const ext = f.name.substring(f.name.lastIndexOf(".")).toLowerCase();
+          if (imgExts.includes(ext)) {
+            selectedFiles.push(f);
+          }
+        }
+        // Sắp xếp theo tên
+        selectedFiles.sort((a, b) => a.name.localeCompare(b.name));
+
+        if (selectedFiles.length === 0) {
+          alert("Không tìm thấy file ảnh nào trong thư mục đã chọn.");
+          return;
+        }
+        folderName.textContent = `📁 ${selectedFiles.length} ảnh được chọn`;
+        detectBtn.disabled = false;
+        previewContainer.style.display = "none";
+      }
+
+      // --- Slider confidence ---
+      confSlider.addEventListener("input", (e) => {
+        confValue.textContent = parseFloat(e.target.value).toFixed(2);
+      });
+      skipSlider.addEventListener("input", (e) => {
+        skipValue.textContent = e.target.value;
+      });
+
+      // --- Nút "Nhận dạng" ---
+      detectBtn.addEventListener("click", async () => {
+        if (currentMode === "single") {
+          await detectSingle();
+        } else if (currentMode === "folder") {
+          await detectFolder();
+        } else {
+          await detectVideo();
+        }
+      });
+
+      // --- Detect ảnh đơn (giữ nguyên logic cũ) ---
+      async function detectSingle() {
+        if (!selectedFile) return;
+
+        loading.classList.add("show");
+        document.getElementById("loadingText").textContent =
+          "Đang nhận dạng ảnh...";
+        const _st = Date.now();
+        const _ti = setInterval(() => {
+          const s = Math.floor((Date.now() - _st) / 1000);
+          document.getElementById("loadingSubtext").textContent =
+            `⏱️ Đã chạy: ${s}s`;
+        }, 1000);
+        resultsSection.classList.remove("show");
+        resultsSection.innerHTML = "";
+        detectBtn.disabled = true;
+
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("model", document.getElementById("modelSelect").value);
+        formData.append("confidence", confSlider.value);
+
+        try {
+          const response = await fetch("/detect", {
+            method: "POST",
+            body: formData,
+          });
+
+          const contentType = response.headers.get("content-type") || "";
+          if (!contentType.includes("application/json")) {
+            const text = await response.text();
+            alert("Lỗi server: Server không trả về JSON.");
+            console.error("Server response:", text);
+            return;
+          }
+
+          const data = await response.json();
+          if (data.error) {
+            alert("Lỗi: " + data.error);
+            return;
+          }
+          renderResults(data.results);
+        } catch (err) {
+          alert("Lỗi kết nối server: " + err.message);
+          console.error(err);
+        } finally {
+          clearInterval(_ti);
+          loading.classList.remove("show");
+          detectBtn.disabled = false;
+          document.getElementById("loadingText").textContent =
+            "Đang xử lý nhận dạng...";
+          document.getElementById("loadingSubtext").textContent =
+            "Lần đầu có thể mất vài giây để load mô hình";
+        }
+      }
+
+      // --- Detect cả folder ---
+      async function detectFolder() {
+        if (selectedFiles.length === 0) return;
+
+        loading.classList.add("show");
+        resultsSection.classList.remove("show");
+        resultsSection.innerHTML = "";
+        detectBtn.disabled = true;
+
+        const formData = new FormData();
+        for (const f of selectedFiles) {
+          formData.append("files", f);
+        }
+        formData.append("model", document.getElementById("modelSelect").value);
+        formData.append("confidence", confSlider.value);
+
+        try {
+          const response = await fetch("/detect-batch", {
+            method: "POST",
+            body: formData,
+          });
+
+          const contentType = response.headers.get("content-type") || "";
+          if (!contentType.includes("application/json")) {
+            const text = await response.text();
+            alert("Lỗi server: Server không trả về JSON.");
+            console.error("Server response:", text);
+            return;
+          }
+
+          const data = await response.json();
+          if (data.error) {
+            alert("Lỗi: " + data.error);
+            return;
+          }
+
+          folderResults = data.images;
+          currentImageIndex = 0;
+          renderFolderView();
+        } catch (err) {
+          alert("Lỗi kết nối server: " + err.message);
+          console.error(err);
+        } finally {
+          loading.classList.remove("show");
+          detectBtn.disabled = false;
+        }
+      }
+
+      // --- Hiển thị kết quả folder (1 ảnh + nav) ---
+      function renderFolderView() {
+        if (folderResults.length === 0) return;
+        const img = folderResults[currentImageIndex];
+        const total = folderResults.length;
+        const idx = currentImageIndex;
+
+        let html = "";
+
+        // Navigation bar
+        html += `<div class="folder-nav">`;
+        html += `<button class="btn-nav" onclick="navPrev()" ${idx === 0 ? "disabled" : ""}>⬅ Prev</button>`;
+        html += `<div class="nav-info">Ảnh ${idx + 1} / ${total}<span class="nav-filename" title="${img.filename}">${img.filename}</span></div>`;
+        html += `<button class="btn-nav" onclick="navNext()" ${idx === total - 1 ? "disabled" : ""}>Next ➡</button>`;
+        html += `</div>`;
+
+        // Render results cho ảnh hiện tại
+        html += renderResultsHTML(img.results);
+
+        resultsSection.innerHTML = html;
+        resultsSection.classList.add("show");
+      }
+
+      function navPrev() {
+        if (currentImageIndex > 0) {
+          currentImageIndex--;
+          renderFolderView();
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+      function navNext() {
+        if (currentImageIndex < folderResults.length - 1) {
+          currentImageIndex++;
+          renderFolderView();
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      // --- Phím tắt: ← / → ---
+      document.addEventListener("keydown", (e) => {
+        if (folderResults.length === 0) return;
+        if (e.key === "ArrowLeft") navPrev();
+        if (e.key === "ArrowRight") navNext();
+      });
+
+      /**
+       * Tạo HTML cho kết quả (dùng chung single + folder)
+       */
+      function renderResultsHTML(results) {
+        let html = "";
+
+        results.forEach((r) => {
+          html += `<div class="result-card">`;
+          html += `<div class="result-header">`;
+          html += `<h3>🤖 ${r.model_name.toUpperCase()}</h3>`;
+          html += `<div class="time-badges">`;
+          html += `<span class="badge badge-infer">⏱️ Inference: ${r.inference_ms} ms</span>`;
+          if (r.load_ms > 0) {
+            html += `<span class="badge badge-load">📦 Load: ${r.load_ms} ms</span>`;
+          } else {
+            html += `<span class="badge badge-load">📦 Từ cache</span>`;
+          }
+          html += `<span class="badge badge-count">🎯 ${r.total_detections} đối tượng</span>`;
+          if (r.device) {
+            const devIcon = r.device.includes("cuda") ? "⚡" : "🖥️";
+            html += `<span class="badge badge-load">${devIcon} ${r.device.includes("cuda") ? "GPU" : "CPU"}</span>`;
+          }
+          html += `</div></div>`;
+
+          html += `<div class="result-body">`;
+          html += `<div class="result-image">`;
+          html += `<img src="data:image/jpeg;base64,${r.image_base64}" alt="Result">`;
+          html += `</div>`;
+
+          html += `<div class="result-info">`;
+          if (r.detections.length === 0) {
+            html += `<p class="no-detection">Không phát hiện đối tượng nào. Thử giảm ngưỡng confidence.</p>`;
+          } else {
+            html += `<table class="det-table"><thead><tr>`;
+            html += `<th>Đối tượng</th><th>Confidence</th><th>Bounding Box</th>`;
+            html += `</tr></thead><tbody>`;
+            r.detections.forEach((d) => {
+              const labelClass = getLabelClass(d.label);
+              const confPct = (d.confidence * 100).toFixed(1);
+              html += `<tr>`;
+              html += `<td class="${labelClass}">${d.label.toUpperCase()}</td>`;
+              html += `<td>
+                        ${confPct}%
+                        <div class="conf-bar"><div class="conf-bar-fill" style="width:${confPct}%"></div></div>
+                    </td>`;
+              html += `<td style="font-size:0.8rem;color:#a0a0a0">[${d.box.join(", ")}]</td>`;
+              html += `</tr>`;
+            });
+            html += `</tbody></table>`;
+          }
+
+          if (r.training_metrics) {
+            const m = r.training_metrics;
+            html += `<div class="metrics-panel">`;
+            html += `<h4>📊 Metrics huấn luyện (Best Epoch: ${m.epoch})</h4>`;
+            html += metricRow(
+              "Precision",
+              (m["precision"] * 100).toFixed(1) + "%",
+            );
+            html += metricRow("Recall", (m["recall"] * 100).toFixed(1) + "%");
+            html += metricRow("mAP@0.5", (m["mAP@0.5"] * 100).toFixed(1) + "%");
+            html += metricRow(
+              "mAP@0.5:0.95",
+              (m["mAP@0.5:0.95"] * 100).toFixed(1) + "%",
+            );
+            html += `</div>`;
+          }
+
+          html += `</div></div></div>`;
+        });
+
+        return html;
+      }
+
+      /**
+       * Hiển thị kết quả nhận dạng ảnh đơn
+       */
+      function renderResults(results) {
+        resultsSection.innerHTML = renderResultsHTML(results);
+        resultsSection.classList.add("show");
+        resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /** Lấy CSS class cho label */
+      function getLabelClass(label) {
+        const map = {
+          nemo: "label-nemo",
+          dory: "label-dory",
+          "bat sea star": "label-bat-sea-star",
+          "blue sea star": "label-blue-sea-star",
+          "crown of thorn starfish": "label-crown-of-thorn-starfish",
+          "red cushion sea star": "label-red-cushion-sea-star",
+          "royal starfish": "label-royal-starfish",
+        };
+        return map[label.toLowerCase()] || "label-nemo";
+      }
+
+      /** Tạo 1 dòng metric */
+      function metricRow(label, value) {
+        return `<div class="metric-row"><span class="metric-label">${label}</span><span class="metric-value">${value}</span></div>`;
+      }
+
+      // --- Detect video (SSE progress) ---
+      let _videoTimer = null;
+      async function detectVideo() {
+        if (!selectedVideo) return;
+
+        loading.classList.add("show");
+        resultsSection.classList.remove("show");
+        resultsSection.innerHTML = "";
+        detectBtn.disabled = true;
+
+        // Show progress bar
+        const progressContainer = document.getElementById(
+          "videoProgressContainer",
+        );
+        const progressBarFill = document.getElementById("progressBarFill");
+        const progressModel = document.getElementById("progressModel");
+        const progressPercent = document.getElementById("progressPercent");
+        const progressFrames = document.getElementById("progressFrames");
+        const progressFps = document.getElementById("progressFps");
+        const progressEta = document.getElementById("progressEta");
+        const loadingText = document.getElementById("loadingText");
+        const loadingSubtext = document.getElementById("loadingSubtext");
+
+        progressContainer.style.display = "block";
+        progressBarFill.style.width = "0%";
+        progressPercent.textContent = "0%";
+        progressModel.textContent = "";
+        progressFrames.textContent = "Frame 0 / 0";
+        progressFps.textContent = "0 fps";
+        progressEta.textContent = "ETA: --";
+        loadingText.textContent = "Đang upload video...";
+        loadingSubtext.textContent = "Vui lòng chờ...";
+
+        // Start elapsed timer
+        const startTime = Date.now();
+        _videoTimer = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - startTime) / 1000);
+          const min = Math.floor(elapsed / 60);
+          const sec = elapsed % 60;
+          loadingSubtext.textContent = `⏱️ Đã chạy: ${min > 0 ? min + "m " : ""}${sec}s`;
+        }, 1000);
+
+        const formData = new FormData();
+        formData.append("file", selectedVideo);
+        formData.append("model", document.getElementById("modelSelect").value);
+        formData.append("confidence", confSlider.value);
+        formData.append("skip_frames", skipSlider.value);
+
+        try {
+          // Step 1: Start the task
+          const startRes = await fetch("/start-video-task", {
+            method: "POST",
+            body: formData,
+          });
+          const startData = await startRes.json();
+          if (startData.error) {
+            alert("Lỗi: " + startData.error);
+            return;
+          }
+          const taskId = startData.task_id;
+
+          loadingText.textContent = "Đang xử lý video...";
+
+          // Step 2: Listen to SSE for progress
+          await new Promise((resolve, reject) => {
+            const evtSource = new EventSource(`/video-progress/${taskId}`);
+            evtSource.onmessage = (event) => {
+              const p = JSON.parse(event.data);
+              if (p.status === "done") {
+                progressBarFill.style.width = "100%";
+                progressPercent.textContent = "100%";
+                loadingText.textContent = "Đang encode video H.264...";
+                evtSource.close();
+                resolve();
+                return;
+              }
+              if (p.status === "error") {
+                evtSource.close();
+                reject(new Error(p.error || "Lỗi xử lý video"));
+                return;
+              }
+              if (p.total_frames > 0) {
+                const pct = ((p.current_frame / p.total_frames) * 100).toFixed(
+                  1,
+                );
+                progressBarFill.style.width = pct + "%";
+                progressPercent.textContent = pct + "%";
+                progressFrames.textContent = `Frame ${p.current_frame} / ${p.total_frames}`;
+                progressFps.textContent = `${p.fps_processing} fps`;
+                const modelLabel =
+                  p.total_models > 1
+                    ? `${p.model_name.toUpperCase()} (${p.model_index}/${p.total_models})`
+                    : p.model_name.toUpperCase();
+                progressModel.textContent = `🤖 ${modelLabel}`;
+                loadingText.textContent = `Đang nhận dạng — ${modelLabel}`;
+                // ETA
+                const remaining = p.total_frames - p.current_frame;
+                if (p.fps_processing > 0) {
+                  const etaSec = remaining / p.fps_processing;
+                  if (etaSec > 60) {
+                    progressEta.textContent = `ETA: ${Math.floor(etaSec / 60)}m ${Math.round(etaSec % 60)}s`;
+                  } else {
+                    progressEta.textContent = `ETA: ~${Math.round(etaSec)}s`;
+                  }
+                } else {
+                  progressEta.textContent = "ETA: đang tính...";
+                }
+              }
+            };
+            evtSource.onerror = () => {
+              evtSource.close();
+              reject(new Error("Mất kết nối progress"));
+            };
+          });
+
+          // Step 3: Get results
+          loadingText.textContent = "Đang tải kết quả...";
+          const resultRes = await fetch(`/video-result/${taskId}`);
+          const resultData = await resultRes.json();
+          if (resultData.error) {
+            alert("Lỗi: " + resultData.error);
+            return;
+          }
+          renderVideoResults(resultData.results);
+        } catch (err) {
+          alert("Lỗi: " + err.message);
+          console.error(err);
+        } finally {
+          if (_videoTimer) {
+            clearInterval(_videoTimer);
+            _videoTimer = null;
+          }
+          loading.classList.remove("show");
+          detectBtn.disabled = false;
+          progressContainer.style.display = "none";
+          loadingText.textContent = "Đang xử lý nhận dạng...";
+          loadingSubtext.textContent =
+            "Lần đầu có thể mất vài giây để load mô hình";
+        }
+      }
+
+      /** Hiển thị kết quả video */
+      function renderVideoResults(results) {
+        let html = "";
+        results.forEach((r) => {
+          html += `<div class="result-card">`;
+          html += `<div class="result-header">`;
+          html += `<h3>🤖 ${r.model_name.toUpperCase()}</h3>`;
+          html += `<div class="time-badges">`;
+          html += `<span class="badge badge-infer">⏱️ Tổng: ${(r.inference_ms / 1000).toFixed(1)}s</span>`;
+          if (r.load_ms > 0) {
+            html += `<span class="badge badge-load">📦 Load: ${r.load_ms} ms</span>`;
+          } else {
+            html += `<span class="badge badge-load">📦 Từ cache</span>`;
+          }
+          html += `<span class="badge badge-count">🎞️ ${r.total_frames} frames</span>`;
+          html += `<span class="badge badge-count">🎯 ${r.total_detections} detections</span>`;
+          html += `</div></div>`;
+
+          html += `<div class="result-body">`;
+          html += `<div class="result-image" style="min-width:60%">`;
+          html += `<video controls autoplay loop muted style="max-width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.1)">`;
+          html += `<source src="data:video/mp4;base64,${r.video_base64}" type="video/mp4">`;
+          html += `</video>`;
+          html += `</div>`;
+
+          html += `<div class="result-info">`;
+          html += `<div class="metrics-panel">`;
+          html += `<h4>📊 Thống kê video</h4>`;
+          html += metricRow("Tổng frames", r.total_frames);
+          html += metricRow(
+            "Frames xử lý",
+            r.processed_frames || r.total_frames,
+          );
+          html += metricRow("Skip frames", r.skip_frames || 1);
+          html += metricRow("FPS gốc", r.fps);
+          html += metricRow("Tổng detections", r.total_detections);
+          html += metricRow(
+            "TB detect/frame",
+            (r.total_detections / Math.max(r.total_frames, 1)).toFixed(1),
+          );
+          html += metricRow(
+            "Thời gian xử lý",
+            (r.inference_ms / 1000).toFixed(1) + "s",
+          );
+          html += metricRow(
+            "TB ms/frame",
+            (r.inference_ms / Math.max(r.total_frames, 1)).toFixed(1) + " ms",
+          );
+          html += `</div>`;
+
+          if (r.training_metrics) {
+            const m = r.training_metrics;
+            html += `<div class="metrics-panel" style="margin-top:10px">`;
+            html += `<h4>📊 Metrics huấn luyện (Best Epoch: ${m.epoch})</h4>`;
+            html += metricRow(
+              "Precision",
+              (m["precision"] * 100).toFixed(1) + "%",
+            );
+            html += metricRow("Recall", (m["recall"] * 100).toFixed(1) + "%");
+            html += metricRow("mAP@0.5", (m["mAP@0.5"] * 100).toFixed(1) + "%");
+            html += metricRow(
+              "mAP@0.5:0.95",
+              (m["mAP@0.5:0.95"] * 100).toFixed(1) + "%",
+            );
+            html += `</div>`;
+          }
+          html += `</div></div></div>`;
+        });
+
+        resultsSection.innerHTML = html;
+        resultsSection.classList.add("show");
+        resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    </script>
+  </body>
+</html>
