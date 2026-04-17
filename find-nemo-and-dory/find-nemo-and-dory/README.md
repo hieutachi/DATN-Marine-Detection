@@ -40,6 +40,7 @@ find-nemo-and-dory/
 ├── app.py                            # Web server (Flask)
 ├── setup_gpu.py                      # Tự detect GPU & cài PyTorch CUDA
 ├── requirements.txt                  # Danh sách thư viện
+├── GUIDE.md                          # Hướng dẫn xây dựng từ đầu
 └── README.md
 ```
 

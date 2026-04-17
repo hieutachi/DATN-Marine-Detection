@@ -40,14 +40,24 @@
 
 ---
 
-## 📚 Mã nguồn và tài liệu chạy thử
+## 📚 Tài liệu cho sinh viên (tải về, đọc cùng mã nguồn)
 
-Repository trên Git chỉ giữ **phần cần cho tái hiện đồ án**: mã Python, giao diện web, `requirements.txt` và README kỹ thuật.
+| Tài liệu | Mô tả |
+| -------- | ----- |
+| [HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md](./HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md) | Hướng dẫn thực hành theo tuần |
+| [LY_THUYET_CO_BAN_CHO_SINH_VIEN.md](./LY_THUYET_CO_BAN_CHO_SINH_VIEN.md) | Lý thuyết ML/CV cơ bản |
+| [DATN_Outline_MVP.md](./DATN_Outline_MVP.md) | Outline báo cáo |
+| [DATN_NoiDung_MVP.md](./DATN_NoiDung_MVP.md) | Nội dung 5 chương tham khảo |
+| [BAT_DAU_NGAY.md](./BAT_DAU_NGAY.md) | Bắt đầu nhanh |
+| [SUMMARY.md](./SUMMARY.md) | Tóm tắt dự án |
+| [masterPlan.md](./masterPlan.md) | Kế hoạch / roadmap |
+| [CHO_SINH_VIEN_HOANG_HAI_ANH.md](./CHO_SINH_VIEN_HOANG_HAI_ANH.md) | Ghi chú riêng sinh viên |
+| [find-nemo-and-dory/find-nemo-and-dory/GUIDE.md](./find-nemo-and-dory/find-nemo-and-dory/GUIDE.md) | Hướng dẫn xây dựng chi tiết trong thư mục code |
 
-**Hướng dẫn cài đặt, chạy nhận dạng và pipeline:**  
+*Lưu ý: `HUONG_DAN_UPLOAD_GITHUB.md` (hướng dẫn thao tác Git) **không** đưa lên repo — chỉ giữ bản cục bộ nếu giảng viên/cố vấn cần.*
+
+**Chạy thử ứng dụng / pipeline:**  
 → **[find-nemo-and-dory/find-nemo-and-dory/README.md](./find-nemo-and-dory/find-nemo-and-dory/README.md)**
-
-*(Tài liệu kế hoạch HD, outline báo cáo dài và file lý thuyết phục vụ soạn báo cáo có thể được lưu cục bộ; không đưa vào repo để giữ nhẹ và rõ ràng.)*
 
 ---
 
@@ -74,19 +84,19 @@ Mở trình duyệt tại **http://localhost:5000**. Cần đặt trọng số h
 
 ---
 
-## 📂 Cấu trúc repository (trên Git)
+## 📂 Cấu trúc repository (rút gọn)
 
 ```
 DATN-Marine-Detection/
-├── README.md                         # Giới thiệu đồ án (file này)
+├── README.md
+├── *.md                              # Tài liệu hướng dẫn, outline, nội dung báo cáo tham khảo
 ├── .gitignore
 └── find-nemo-and-dory/find-nemo-and-dory/
-    ├── app.py                        # Flask
-    ├── detect.py                     # Inference
-    ├── *.py                          # Pipeline, tiện ích
+    ├── app.py, detect.py, …
     ├── requirements.txt
     ├── templates/index.html
-    └── README.md                     # Chi tiết chạy thử và cấu trúc thư mục dự án
+    ├── GUIDE.md
+    └── README.md
 ```
 
 ---
