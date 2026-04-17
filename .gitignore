@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# PyTorch Models
+*.pth
+*.pt
+*.onnx
+
+# Data
+dataset/
+data/
+*.zip
+*.tar.gz
+*.csv
+*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Output
+output/
+runs/
+results/
+checkpoints/
+
+# Logs
+*.log
+logs/
+
+# Kiro
+.kiro/
+
+# Project specific
+find-nemo-and-dory/
+Colab Notebooks/
+*.docx
+*.doc
+*.pdf
+*.pptx
