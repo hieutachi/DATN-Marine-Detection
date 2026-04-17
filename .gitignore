@@ -76,3 +76,18 @@ Colab Notebooks/
 *.doc
 *.pdf
 *.pptx
+
+# HD nội bộ / kế hoạch (giữ máy local, không cần trên Git cho sản phẩm ĐATN)
+BAT_DAU_NGAY.md
+CHO_SINH_VIEN_HOANG_HAI_ANH.md
+DATN_NoiDung_MVP.md
+DATN_Outline_MVP.md
+HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md
+HUONG_DAN_UPLOAD_GITHUB.md
+LY_THUYET_CO_BAN_CHO_SINH_VIEN.md
+SUMMARY.md
+masterPlan.md
+find-nemo-and-dory/find-nemo-and-dory/GUIDE.md
+
+# Ảnh/video mẫu thử nghiệm (không bắt buộc cho chạy mã)
+**/nemo_dory_example/

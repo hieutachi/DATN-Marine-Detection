@@ -40,122 +40,71 @@
 
 ---
 
-## 📚 Tài Liệu Hướng Dẫn
+## 📚 Mã nguồn và tài liệu chạy thử
 
-Repository này chứa **TẤT CẢ** tài liệu cần thiết để hoàn thành đồ án:
+Repository trên Git chỉ giữ **phần cần cho tái hiện đồ án**: mã Python, giao diện web, `requirements.txt` và README kỹ thuật.
 
-### 📖 Cho Sinh Viên Mới Bắt Đầu
+**Hướng dẫn cài đặt, chạy nhận dạng và pipeline:**  
+→ **[find-nemo-and-dory/find-nemo-and-dory/README.md](./find-nemo-and-dory/find-nemo-and-dory/README.md)**
 
-1. **[HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md](./HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md)** ⭐
-   - Hướng dẫn từng bước (10 tuần)
-   - Cài đặt môi trường
-   - Chuẩn bị dữ liệu
-   - Huấn luyện mô hình
-   - Xây dựng ứng dụng
-   - **BẮT ĐẦU TỪ ĐÂY!**
-
-2. **[LY_THUYET_CO_BAN_CHO_SINH_VIEN.md](./LY_THUYET_CO_BAN_CHO_SINH_VIEN.md)** 📚
-   - Lý thuyết Machine Learning cơ bản
-   - Neural Networks & CNN
-   - Object Detection
-   - Faster R-CNN chi tiết
-   - YOLO chi tiết
-   - **ĐỌC ĐỂ HIỂU LÝ THUYẾT!**
-
-### 📝 Nội Dung Báo Cáo
-
-3. **[DATN_Outline_MVP.md](./DATN_Outline_MVP.md)**
-   - Sườn outline đầy đủ
-   - Mục lục chi tiết
-
-4. **[DATN_NoiDung_MVP.md](./DATN_NoiDung_MVP.md)** 📄
-   - Nội dung đầy đủ 5 chương
-   - Phần mở đầu
-   - Chương 1-5
-   - Tài liệu tham khảo
-   - Phụ lục
-   - **DÙNG ĐỂ VIẾT BÁO CÁO!**
+*(Tài liệu kế hoạch HD, outline báo cáo dài và file lý thuyết phục vụ soạn báo cáo có thể được lưu cục bộ; không đưa vào repo để giữ nhẹ và rõ ràng.)*
 
 ---
 
-## 🚀 Bắt Đầu Nhanh
+## 🚀 Bắt đầu nhanh
 
-### Bước 1: Clone Repository
+### Bước 1: Clone repository
 
 ```bash
-# Clone về máy
 git clone https://github.com/hieutachi/DATN-Marine-Detection.git
 cd DATN-Marine-Detection
 ```
 
-### Bước 2: Đọc Hướng Dẫn
+### Bước 2: Cài đặt và chạy web demo
 
 ```bash
-# Mở file hướng dẫn chi tiết
-# Windows:
-notepad HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md
-
-# Linux/Mac:
-nano HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md
-
-# Hoặc dùng VS Code:
-code HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md
+cd find-nemo-and-dory/find-nemo-and-dory
+python -m venv venv
+# Windows: venv\Scripts\activate   | Linux/macOS: source venv/bin/activate
+pip install -r requirements.txt
+python app.py
 ```
 
-### Bước 3: Làm Theo Từng Tuần
-
-**Tuần 1:** Chuẩn bị môi trường  
-**Tuần 2:** Học lý thuyết cơ bản  
-**Tuần 3:** Chuẩn bị dữ liệu  
-**Tuần 4-5:** Huấn luyện mô hình  
-**Tuần 6-7:** Xây dựng ứng dụng  
-**Tuần 8-9:** Viết báo cáo  
-**Tuần 10:** Chuẩn bị bảo vệ
+Mở trình duyệt tại **http://localhost:5000**. Cần đặt trọng số huấn luyện vào `data/` theo hướng dẫn trong README của thư mục con (trọng số không có trong Git).
 
 ---
 
-## 📂 Cấu Trúc Repository
+## 📂 Cấu trúc repository (trên Git)
 
 ```
 DATN-Marine-Detection/
-├── README.md                              # File này
-├── HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md  # Hướng dẫn thực hành ⭐
-├── LY_THUYET_CO_BAN_CHO_SINH_VIEN.md    # Lý thuyết cơ bản 📚
-├── DATN_Outline_MVP.md                   # Outline báo cáo
-├── DATN_NoiDung_MVP.md                   # Nội dung báo cáo 📄
-└── masterPlan.md                         # Master plan gốc
+├── README.md                         # Giới thiệu đồ án (file này)
+├── .gitignore
+└── find-nemo-and-dory/find-nemo-and-dory/
+    ├── app.py                        # Flask
+    ├── detect.py                     # Inference
+    ├── *.py                          # Pipeline, tiện ích
+    ├── requirements.txt
+    ├── templates/index.html
+    └── README.md                     # Chi tiết chạy thử và cấu trúc thư mục dự án
 ```
 
 ---
 
-## 🎓 Dành Cho Sinh Viên Hoàng Hải Anh
+## 🎓 Sinh viên thực hiện
 
-### ✅ Checklist Hoàn Thành Đồ Án
+### ✅ Checklist ngắn (đồng bộ với tiến độ đồ án)
 
-- [ ] **Tuần 1:** Đọc xong HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md (Phần 1)
-- [ ] **Tuần 1:** Cài đặt xong Python, Git, VS Code
-- [ ] **Tuần 1:** Tạo được virtual environment
-- [ ] **Tuần 1:** Đăng ký Google Colab thành công
-- [ ] **Tuần 2:** Đọc xong LY_THUYET_CO_BAN_CHO_SINH_VIEN.md
-- [ ] **Tuần 2:** Hiểu được Object Detection là gì
-- [ ] **Tuần 2:** Hiểu sự khác biệt 3 mô hình
-- [ ] **Tuần 3:** Tải được dataset từ Roboflow
-- [ ] **Tuần 3:** Chạy được script check_dataset.py
-- [ ] **Tuần 3:** Upload dataset lên Google Drive
-- [ ] **Tuần 4:** Train được YOLOv8 (mAP > 0.8)
-- [ ] **Tuần 5:** Train được YOLOv5 và Faster R-CNN
-- [ ] **Tuần 6:** Tạo được script detect.py
-- [ ] **Tuần 7:** Xây dựng được web app Flask
-- [ ] **Tuần 8:** Viết xong Chương 1-3
-- [ ] **Tuần 9:** Viết xong Chương 4-5
-- [ ] **Tuần 10:** Làm xong slide PowerPoint
-- [ ] **Tuần 10:** Luyện tập thuyết trình
+- [ ] Cài đặt môi trường Python và chạy được `app.py`
+- [ ] Chuẩn bị/huấn luyện dữ liệu và đặt đúng trọng số trong `data/`
+- [ ] Chạy được nhận dạng (CLI và/hoặc web), so sánh mô hình
+- [ ] Hoàn thiện báo cáo và slide bảo vệ theo yêu cầu khoa
 
 ### 📞 Hỗ Trợ
 
 **Nếu gặp khó khăn:**
 
-1. **Đọc lại hướng dẫn** - 90% câu hỏi đã có trong tài liệu
+1. **Đọc [README kỹ thuật](./find-nemo-and-dory/find-nemo-and-dory/README.md)** — thiết lập và lỗi thường gặp
 2. **Google lỗi** - Copy lỗi vào Google, thường có giải pháp
 3. **Hỏi ChatGPT/Claude** - Giải thích lỗi và cách fix
 4. **Hỏi bạn cùng lớp** - Làm việc nhóm hiệu quả hơn
@@ -299,7 +248,7 @@ Tháng 6/2026: Viết báo cáo và bảo vệ
 
 **🎓 Chúc bạn Hoàng Hải Anh hoàn thành tốt đồ án tốt nghiệp!**
 
-**💪 Bắt đầu ngay từ hôm nay - Đọc file HUONG_DAN_CHI_TIET_CHO_SINH_VIEN.md!**
+**💪 Bắt đầu từ [README kỹ thuật trong thư mục dự án](./find-nemo-and-dory/find-nemo-and-dory/README.md).**
 
 ---
 

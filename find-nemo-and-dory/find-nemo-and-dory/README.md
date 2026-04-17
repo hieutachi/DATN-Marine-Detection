@@ -35,12 +35,11 @@ find-nemo-and-dory/
 ├── templates/
 │   └── index.html                    # Giao diện web
 ├── static/                           # CSS, JS, ảnh tĩnh
-├── nemo_dory_example/                # Ảnh mẫu
+├── nemo_dory_example/                # (tùy chọn) ảnh/video mẫu thử — cục bộ, không đẩy Git
 ├── detect.py                         # Script nhận dạng (dòng lệnh)
 ├── app.py                            # Web server (Flask)
 ├── setup_gpu.py                      # Tự detect GPU & cài PyTorch CUDA
 ├── requirements.txt                  # Danh sách thư viện
-├── GUIDE.md                          # Hướng dẫn xây dựng từ đầu
 └── README.md
 ```
 
